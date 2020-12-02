@@ -3,7 +3,7 @@
 
   "name": "Just Amazon (jp)",
   "description": "amazon.co.jp での検索結果をAmazon.co.jpの商品のみにします。",
-  "version": "2.0",
+  "version": "2.0.1",
 
   "icons": {
     "16": "icon/JustAmazon16.png",
@@ -19,8 +19,6 @@
     "default_title": "Amazon.co.jp以外も有効にする"
   },
   "permissions": [
-    "tabs",
-    "activeTab",
     "*://www.amazon.co.jp/*"
   ]
 }

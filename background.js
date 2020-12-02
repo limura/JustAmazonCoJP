@@ -3,10 +3,10 @@ var magicWord = "&rh=p_6%3AAN1VRQENFRJN5";
 var tabIdToJustAmazonStatus = {};
 
 function isAmazonQueryURL(url){
-  return url.indexOf("://www.amazon.co.jp/s") != -1 && url.indexOf("k=") != -1;
+  return url?.indexOf("://www.amazon.co.jp/s") != -1 && url?.indexOf("k=") != -1;
 }
 function isJustAmazonURL(url){
-  return url.indexOf(magicWord) != -1;
+  return url?.indexOf(magicWord) != -1;
 }
 
 function enableActionButton(tabId){
