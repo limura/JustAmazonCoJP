@@ -19,6 +19,7 @@
     "default_title": "Amazon.co.jp以外も有効にする"
   },
   "permissions": [
+    "tabs",
     "*://www.amazon.co.jp/*"
   ]
 }
