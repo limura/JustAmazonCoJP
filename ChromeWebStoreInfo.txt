@@ -1,0 +1,11 @@
+amazon.co.jp での検索結果を Amazon.co.jp が販売している商品のみにします。
+逆に言うと、Amazon.co.jpが販売しているわけではないマーケットプレイスの商品を検索結果に含めない形にします。
+なお、マーケットプレイスのものも検索結果に入れたい場合は、"Just Amazon" のアイコンをクリックすることで検索し直すことができます。
+
+Just Amazon のアイコンが 青地に'a' のアイコンの場合は、Amazon.co.jp が販売している商品のみが検索されています。
+Just Amazon のアイコンが 黄色地に'業者' のアイコンの場合は、マーケットプレイスも含めた商品が検索されています。
+
+N-Stylesさんの http://n-styles.com/main/archives/2017/04/14-054444.php を参考にしています。
+(Version 2.0 からはマジックワードとして使っている文字列が &rh=p_6%3AAN1VRQENFRJN5 に変わっています)
+
+source を https://github.com/limura/JustAmazonCoJP においておきました。
