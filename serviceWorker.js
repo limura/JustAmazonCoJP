@@ -10,36 +10,57 @@ function isJustAmazonURL(url){
 }
 
 function enableActionButton(tabId){
-  chrome.browserAction.enable(tabId);
+  chrome.action.enable(tabId);
 }
 function disableActionButton(tabId){
-  chrome.browserAction.disable(tabId);
+  chrome.action.disable(tabId);
 }
 
 function setEnableIcon(tabId){
-  chrome.browserAction.setIcon({
+  chrome.action.setIcon({
     path: "icon/JustAmazon32.png",
     tabId: tabId,
   });
+  chrome.action.setTitle({
+    tabId: tabId,
+    title: "検索結果にAmazon.co.jp以外も含めるよう変更する"
+  });
 }
 function setDisableIcon(tabId){
-  chrome.browserAction.setIcon({
+  chrome.action.setIcon({
     path: "icon/AnyCustomer32.png",
     tabId: tabId,
+  });
+  chrome.action.setTitle({
+    tabId: tabId,
+    title: "検索結果をAmazon.co.jpで販売されているものだけに変更する"
   });
 }
 
 function addJustAmazonURL(tabId){
   tabIdToJustAmazonStatus[tabId] = "Added";
-  chrome.tabs.executeScript(tabId, {code: "location.href+=\"" + magicWord + "\";"});
+  chrome.declarativeNetRequest.updateEnabledRulesets(
+    {
+      disableRulesetIds: ["disableRule"],
+      enableRulesetIds: ["enableRule"],
+    }
+  );
+  chrome.tabs.reload(tabId);
 }
 function delJustAmazonURL(tabId){
   tabIdToJustAmazonStatus[tabId] = "Deleted";
-  chrome.tabs.executeScript(tabId, {code: "location.href=location.href.replace(/" + magicWord + "/, '');"});
+  chrome.declarativeNetRequest.updateEnabledRulesets(
+    {
+      disableRulesetIds: ["enableRule"],
+      enableRulesetIds: ["disableRule"],
+    }
+  );
+  chrome.tabs.reload(tabId);
 }
 
 function ToggleJustAmazon(tab) {
   var currentURL = tab.url;
+  console.log("ToggleJustAmazon called", currentURL);
   if(!isAmazonQueryURL(currentURL)){
     return;
   }
@@ -50,7 +71,7 @@ function ToggleJustAmazon(tab) {
   }
 }
 
-chrome.browserAction.onClicked.addListener(ToggleJustAmazon);
+chrome.action.onClicked.addListener(ToggleJustAmazon);
 
 chrome.tabs.onUpdated.addListener(function(tabId){
   chrome.tabs.get(tabId, function(tab){

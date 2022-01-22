@@ -1,9 +1,9 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
 
   "name": "Just Amazon (jp)",
   "description": "amazon.co.jp での検索結果をAmazon.co.jpの商品のみにします。",
-  "version": "2.0.1",
+  "version": "3.0.0",
 
   "icons": {
     "16": "icon/JustAmazon16.png",
@@ -11,15 +11,31 @@
     "128": "icon/JustAmazon128.png"
   },
   "background": {
-    "scripts": ["background.js"],
-    "persistent": true
+    "service_worker": "serviceWorker.js"
   },
-  "browser_action": {
+  "action": {
     "default_icon": "icon/JustAmazon32.png",
-    "default_title": "Amazon.co.jp以外も有効にする"
+    "default_title": "検索結果をAmazon.co.jpで販売されているものだけに変更する"
   },
   "permissions": [
     "tabs",
-    "*://www.amazon.co.jp/*"
-  ]
+    "declarativeNetRequest"
+  ],
+  "host_permissions": [
+    "*://www.amazon.co.jp/s*"
+  ],
+  "declarative_net_request": {
+    "rule_resources": [
+      {
+        "id": "enableRule",
+        "enabled": true,
+        "path": "enableRule.js"
+      },
+      {
+        "id": "disableRule",
+        "enabled": false,
+        "path": "disableRule.js"
+      }
+    ]
+  }
 }
