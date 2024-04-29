@@ -67,7 +67,6 @@ function enableJustAmazon(tabId){
       enableRulesetIds: ["enableRule"],
     }
   );
-  chrome.tabs.reload(tabId);
 }
 function disableJustAmazon(tabId){
   chrome.declarativeNetRequest.updateEnabledRulesets(
@@ -76,7 +75,6 @@ function disableJustAmazon(tabId){
       enableRulesetIds: ["disableRule"],
     }
   );
-  chrome.tabs.reload(tabId);
 }
 
 function ToggleJustAmazon(tab) {
@@ -90,11 +88,12 @@ function ToggleJustAmazon(tab) {
   }else{
     enableJustAmazon(tab.id);
   }
+  chrome.tabs.reload(tab.Id);
 }
 
 chrome.action.onClicked.addListener(ToggleJustAmazon);
 
-chrome.tabs.onUpdated.addListener(function(tabId){
+function updateAppIconStatus(tabId) {
   chrome.tabs.get(tabId, async function(tab){
     var targetURL = tab.url;
     if(!isAmazonQueryURL(targetURL)){
@@ -102,11 +101,20 @@ chrome.tabs.onUpdated.addListener(function(tabId){
       return;
     }
     enableActionButton(tabId);
-    let isEnabled = await isJustAmazonEnabled();
+    let isEnabled = isJustAmazonURL(targetURL);
     if(isEnabled) {
       setEnableIcon(tabId);
+      enableJustAmazon(tabId);
     }else{
       setDisableIcon(tabId);
+      disableJustAmazon(tabId);
     }
   });
+}
+
+chrome.tabs.onActivated.addListener(({ tabId }) => {
+  updateAppIconStatus(tabId);
+});
+chrome.tabs.onUpdated.addListener(function(tabId){
+  updateAppIconStatus(tabId);
 });
