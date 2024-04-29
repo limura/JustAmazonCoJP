@@ -2,6 +2,29 @@
 var magicWord = "&rh=p_6%3AAN1VRQENFRJN5";
 var tabIdToJustAmazonStatus = {};
 
+function getEnabledRulesetsAsync() {
+  return new Promise((resolve, reject) => {
+    chrome.declarativeNetRequest.getEnabledRulesets((rulesetIds) => {
+      if (chrome.runtime.lastError) {
+        reject(chrome.runtime.lastError);
+      } else {
+        resolve(rulesetIds);
+      }
+    });
+  });
+}
+
+async function isJustAmazonEnabled() {
+  try {
+    const rulesets = await getEnabledRulesetsAsync();
+    const enableRulePresent = rulesets.some(rule => rule.includes("enableRule"));
+    return enableRulePresent;
+  } catch (error) {
+    console.error('Error:', error);
+    return false; // エラーが発生した場合はfalseを返す
+  }
+}
+
 function isAmazonQueryURL(url){
   return url?.indexOf("://www.amazon.co.jp/s") != -1 && url?.indexOf("k=") != -1;
 }
@@ -37,8 +60,7 @@ function setDisableIcon(tabId){
   });
 }
 
-function addJustAmazonURL(tabId){
-  tabIdToJustAmazonStatus[tabId] = "Added";
+function enableJustAmazon(tabId){
   chrome.declarativeNetRequest.updateEnabledRulesets(
     {
       disableRulesetIds: ["disableRule"],
@@ -47,8 +69,7 @@ function addJustAmazonURL(tabId){
   );
   chrome.tabs.reload(tabId);
 }
-function delJustAmazonURL(tabId){
-  tabIdToJustAmazonStatus[tabId] = "Deleted";
+function disableJustAmazon(tabId){
   chrome.declarativeNetRequest.updateEnabledRulesets(
     {
       disableRulesetIds: ["enableRule"],
@@ -65,28 +86,24 @@ function ToggleJustAmazon(tab) {
     return;
   }
   if(isJustAmazonURL(currentURL)){
-    delJustAmazonURL(tab.id);
+    disableJustAmazon(tab.id);
   }else{
-    addJustAmazonURL(tab.id);
+    enableJustAmazon(tab.id);
   }
 }
 
 chrome.action.onClicked.addListener(ToggleJustAmazon);
 
 chrome.tabs.onUpdated.addListener(function(tabId){
-  chrome.tabs.get(tabId, function(tab){
+  chrome.tabs.get(tabId, async function(tab){
     var targetURL = tab.url;
     if(!isAmazonQueryURL(targetURL)){
       disableActionButton(tabId);
       return;
     }
     enableActionButton(tabId);
-    if(!(tabId in tabIdToJustAmazonStatus)){
-      if(!isJustAmazonURL(targetURL)){
-        addJustAmazonURL(tabId);
-      }
-    }
-    if(isJustAmazonURL(targetURL)){
+    let isEnabled = await isJustAmazonEnabled();
+    if(isEnabled) {
       setEnableIcon(tabId);
     }else{
       setDisableIcon(tabId);
