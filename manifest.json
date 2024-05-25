@@ -3,7 +3,7 @@
 
   "name": "Just Amazon (jp)",
   "description": "amazon.co.jp での検索結果をAmazon.co.jpの商品のみにします。",
-  "version": "3.0.2",
+  "version": "3.0.3",
 
   "icons": {
     "16": "icon/JustAmazon16.png",
